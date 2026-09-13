@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Therian World AI</title>
+<style>
+:root{--bg:#08090d;--panel:#12141b;--panel2:#1a1d26;--text:#f4f5f7;--muted:#a5a9b5;--line:#2b2f3b;--accent:#9b8cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#171326 0,#08090d 45%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+header{padding:22px 18px 15px;text-align:center;border-bottom:1px solid var(--line);background:#0c0d12cc;backdrop-filter:blur(12px);position:sticky;top:0;z-index:5}
+h1{margin:0;font-size:25px}header p{margin:5px 0 0;color:var(--muted)}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:9px;background:#0c0d12;position:sticky;top:83px;z-index:4}
+button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:13px;padding:11px 9px;font-weight:700;font-size:14px}
+button:active{transform:scale(.98)}button.primary{background:var(--accent);color:#09090d;border-color:transparent}
+main{max-width:850px;margin:auto;padding:14px 14px 40px}.screen{display:none}.screen.active{display:block}
+.card{background:linear-gradient(145deg,#171922,#101219);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 8px 30px #0004}
+.card h2,.card h3{margin-top:0}.muted{color:var(--muted)}
+#messages{height:52vh;min-height:360px;overflow:auto;padding:4px}.bubble{max-width:88%;padding:12px 14px;margin:9px 0;border-radius:17px;line-height:1.45;white-space:pre-wrap}.ai{background:#20232d;border-bottom-left-radius:5px}.me{background:#5d55a8;margin-left:auto;border-bottom-right-radius:5px}
+.composer{display:flex;gap:7px;position:sticky;bottom:0;background:#08090d;padding:9px 0}.composer input{min-width:0;flex:1}
+input,select{width:100%;padding:13px;border-radius:13px;border:1px solid var(--line);background:#0f1117;color:white;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.grid button{text-align:left;padding:16px}.big{font-size:24px}
+.progress{height:12px;background:#292d38;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:.3s}
+.choice{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.choice button{flex:1;min-width:120px}
+.stat{display:flex;justify-content:space-between;margin:9px 0}
+.lesson{font-size:18px;line-height:1.5}
+.badge{display:inline-block;padding:6px 9px;border-radius:99px;background:#242736;margin:4px}
+footer{text-align:center;color:#777;padding:20px;font-size:12px}
+@media(max-width:560px){nav{top:82px}.grid{grid-template-columns:1fr}#messages{height:50vh}}
+</style>
+</head>
+<body>
+<header><h1>🐾 Therian World AI</h1><p>Chat • Learn Quads • Adventures • XP</p></header>
+<nav>
+<button class="tab active" data-go="chat">💬 Chat</button>
+<button class="tab" data-go="quads">🐾 Quads</button>
+<button class="tab" data-go="adventure">🌲 Adventure</button>
+<button class="tab" data-go="profile">⭐ Profile</button>
+</nav>
+
+<main>
+<section id="chat" class="screen active">
+<div class="card"><div id="messages"></div>
+<div class="composer"><input id="input" placeholder="Talk to your Therian AI..." autocomplete="off"><button class="primary" id="send">Send</button></div>
+<div class="choice"><button data-chat="Teach me quads">🐾 Teach quads</button><button data-chat="Give me an adventure">🌲 Adventure</button><button data-chat="Give me a warm-up">🔥 Warm-up</button></div>
+</div></section>
+
+<section id="quads" class="screen">
+<div class="card"><h2>🐾 Quad Academy</h2><p class="muted">Follow the steps at your own pace. Stop if anything hurts.</p>
+<div class="progress"><i id="bar"></i></div><p id="lesson" class="lesson"></p>
+<div class="choice"><button id="back">← Back</button><button class="primary" id="next">Next →</button></div></div>
+<div class="card"><h3>Safety</h3><p>Use a soft, non-slip surface. Keep movements controlled and take breaks. Quads can be physically demanding, so don't push through pain.</p></div>
+</section>
+
+<section id="adventure" class="screen">
+<div class="card"><h2>🌲 Choose your adventure</h2><div class="grid">
+<button data-ad="forest"><span class="big">🌲</span><br>Forest Quest<br><span class="muted">Follow mysterious pawprints.</span></button>
+<button data-ad="moon"><span class="big">🌙</span><br>Moonlit Trail<br><span class="muted">Explore under the stars.</span></button>
+<button data-ad="mountain"><span class="big">⛰️</span><br>Mountain Mystery<br><span class="muted">Find a hidden den.</span></button>
+<button data-ad="river"><span class="big">🌊</span><br>River Run<br><span class="muted">Solve the river challenge.</span></button>
+</div></div>
+<div id="story" class="card" style="display:none"></div>
+</section>
+
+<section id="profile" class="screen">
+<div class="card"><h2>⭐ Your Profile</h2>
+<div class="stat"><span>Level</span><b id="level">1</b></div><div class="progress"><i id="xpbar"></i></div>
+<div class="stat"><span>XP</span><b id="xp">0</b></div><div class="stat"><span>Adventures</span><b id="adventures">0</b></div></div>
+<div class="card"><h3>🏆 Achievements</h3><div id="badges"><span class="badge">🌱 New Therian</span></div></div>
+<button id="reset">Reset progress</button>
+</section>
+</main>
+<footer>Made for fun, learning, and imagination 🐾</footer>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+let data=JSON.parse(localStorage.getItem("therianWorld")||'{"xp":0,"adventures":0,"lesson":0}');
+const lessons=[
+"Step 1 — Warm up: gently move your wrists, shoulders, hips and ankles for a few minutes.",
+"Step 2 — Position: practice a comfortable tabletop position. Keep your hands under your shoulders and knees under your hips.",
+"Step 3 — Balance: slowly lift one hand or one knee at a time for a moment. Stay controlled.",
+"Step 4 — Crawl: try a very short, slow quad movement on a soft, clear surface.",
+"Step 5 — Rest: shake out your hands, breathe, and check how your body feels.",
+"Step 6 — Practice: repeat a short set only if you feel comfortable. Smooth movement is more important than speed."
+];
+function save(){localStorage.setItem("therianWorld",JSON.stringify(data));updateStats()}
+function updateStats(){
+$("#xp").textContent=data.xp;$("#level").textContent=Math.floor(data.xp/100)+1;$("#adventures").textContent=data.adventures;
+$("#xpbar").style.width=(data.xp%100)+"%";
+let b=["🌱 New Therian"];if(data.xp>=50)b.push("🐾 First Steps");if(data.xp>=100)b.push("⭐ Level Up");if(data.adventures>=3)b.push("🌲 Explorer");$("#badges").innerHTML=b.map(x=>`<span class="badge">${x}</span>`).join("");
+}
+function addXP(n){data.xp+=n;save()}
+function go(id){$$(".screen").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");window.scrollTo(0,0)}
+$$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.go));
+function addBubble(text,who){let d=document.createElement("div");d.className="bubble "+who;d.textContent=text;$("#messages").appendChild(d);$("#messages").scrollTop=$("#messages").scrollHeight}
+function aiReply(t){
+let x=t.toLowerCase();
+if(x.includes("quad")||x.includes("walk")||x.includes("crawl")) return "🐾 Let's train safely! Open Quad Academy for a step-by-step lesson. Start with a warm-up, use a soft surface, keep movements controlled, and stop if something hurts.";
+if(x.includes("warm")) return "🔥 Warm-up: gently circle your wrists and ankles, roll your shoulders, move your hips, then do a few easy squats. Keep everything comfortable.";
+if(x.includes("adventure")) return "🌲 Adventure time! Open the Adventure tab and choose a quest. You'll get XP as you complete missions.";
+if(x.includes("animal")||x.includes("fox")||x.includes("wolf")||x.includes("cat")) return "🐺🦊🐱 Awesome choice! I can turn your favorite animal into a fun adventure. Try asking: “Make me a fox adventure.”";
+if(x.includes("hello")||x.includes("hi")) return "Hey! 🐾 What do you want to do: learn quads, warm up, or go on an adventure?";
+return "I’m your Therian World guide! 🐾 I can teach beginner quad skills, suggest safe warm-ups, make animal adventures, and give you missions. Try asking me one of those!";
+}
+function send(){let v=$("#input").value.trim();if(!v)return;addBubble(v,"me");$("#input").value="";setTimeout(()=>{addBubble(aiReply(v),"ai");addXP(5)},250)}
+$("#send").onclick=send;$("#input").onkeydown=e=>{if(e.key==="Enter")send()};
+$$("[data-chat]").forEach(b=>b.onclick=()=>{$("#input").value=b.dataset.chat;send()});
+function renderLesson(){let i=Math.max(0,Math.min(data.lesson,lessons.length-1));$("#lesson").textContent=lessons[i];$("#bar").style.width=((i+1)/lessons.length*100)+"%"}
+$("#next").onclick=()=>{if(data.lesson<lessons.length-1)data.lesson++;addXP(10);renderLesson();save()};
+$("#back").onclick=()=>{if(data.lesson>0)data.lesson--;renderLesson();save()};
+const adventures={
+forest:["🌲 You enter a quiet forest. Pawprints lead toward a split in the trail.","You hear leaves rustling. Choose: follow the pawprints or climb a small safe hill.","A friendly fox appears! Mission complete — you discovered the secret trail."],
+moon:["🌙 Moonlight shines on a trail covered in silver leaves.","Choose: follow the glowing footprints or investigate a distant howl.","You reach a peaceful clearing and discover a star-shaped stone. Mission complete!"],
+mountain:["⛰️ You arrive at a mountain path with three mysterious markings.","Choose: inspect the pawprint or follow the feather trail.","You find a hidden den overlooking the valley. Mission complete!"],
+river:["🌊 A sparkling river blocks the trail.","Choose: search for stepping stones or follow the riverbank.","You discover a beautiful hidden waterfall. Mission complete!"]
+};
+$$("[data-ad]").forEach(b=>b.onclick=()=>startAdventure(b.dataset.ad));
+function startAdventure(type){let s=adventures[type],i=0;let box=$("#story");box.style.display="block";function draw(){box.innerHTML=`<h2>${s[i]}</h2><p>${i===0?"Your mission is to explore and make a choice.":i===1?"What do you choose?":"🎉 "+s[2]}</p>`;if(i<2){let c=document.createElement("div");c.className="choice";["Explore","Investigate","Continue"].forEach((x,n)=>{let q=document.createElement("button");q.textContent=(n===0?"🐾 ":"🌙 ")+x;q.onclick=()=>{i++;if(i===2){data.adventures++;addXP(30);save()}draw()};c.appendChild(q)});box.appendChild(c)}}draw();box.scrollIntoView({behavior:"smooth"})}
+$("#reset").onclick=()=>{if(confirm("Reset all progress?")){data={xp:0,adventures:0,lesson:0};save();renderLesson()}};
+addBubble("Hey! 🐾 Welcome to Therian World! I'm your guide. Ask me anything about beginner quads or adventures, or use the buttons below.","ai");
+renderLesson();updateStats();
+</script>
+</body>
+</html>
